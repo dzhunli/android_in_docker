@@ -1,0 +1,18 @@
+name: make android images
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: debian:bookworm-12-slim
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build image
+      run: |
+       cd emulator && echo 2000 | ./automate_android.sh ../conf/${CI_JOB_NAME};
+       echo "Action done"
