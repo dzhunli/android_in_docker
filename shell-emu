@@ -1,0 +1,185 @@
+#!/bin/bash
+
+_check_preinst() {
+	echo -e -n "Check Docker aviability permission to run Docker commands"
+	if ! docker ps &> /dev/null; then
+		echo -e -n "\033[1;31m FAILED \033[0m" 
+	        echo -e "\033[31m\u274C\033[0m"
+                echo "Error: Docker not accesible"
+		echo "		OR"
+		echo "You don't have permission to run Docker commands."
+                echo "Please install Docker first and run this script as root or with sudo."
+                exit 1
+	else
+		echo -e -n "\033[1;32m SUCCESS \033[0m"
+	        echo -e "\033[32m\u2713\033[0m"
+		echo ""
+	fi
+	echo -e -n "Check TigerVNC aviability"
+	if command -v vncviewer &> /dev/null; then
+		echo -e -n "\033[1;32m SUCCESS \033[0m"
+                echo -e "\033[32m\u2713\033[0m"
+		echo ""
+	else
+		echo -e -n "\033[1;31m FAILED \033[0m" 
+	        echo -e "\033[31m\u274C\033[0m"
+		echo "Error: TigerVNC not installed."
+                echo "Please run install it first."
+                exit 1
+	fi
+}
+
+_build_app() {
+	local image_name="android-emulator:android-13"
+	#if docker images -q $image_name > /dev/null 2>&1; then
+	if docker image inspect $image_name > /dev/null 2>&1; then
+		echo -e -n "Docker image '$image_name' already exists locally."
+        	echo -e -n "\033[1;32m SUCCESS \033[0m"
+        	echo -e "\033[32m\u2713\033[0m"
+        	echo ""
+    	else
+        	echo  "Docker image '$image_name' not found locally."
+       		read -p "Please provide the absolute path to the 'emulator' directory: " emulator_path
+	        if [ -z "$emulator_path" ] || [ ! -d "$emulator_path" ]; then
+            		echo "Invalid path. Please make sure the path is correct and try again."
+            		return 1
+        	fi
+		cd "${emulator_path}/emulator" && echo 2000 | ./automate_android.sh ../conf/android-13
+        	if [ $? -eq 0 ]; then
+			echo -e -n "\033[1;32m SUCCESS \033[0m"
+            		echo -e "\033[32m\u2713\033[0m"
+            		echo ""
+        	else
+            		echo "Build failed"
+            		return 1
+        	fi
+	fi
+}
+_run_app() {
+	echo -e -n "Try to run emulator container with unic name and unic vnc port"
+	container_list=$(docker ps --format '{{.Names}}')
+	max_number=0
+	for container_name in $container_list; do
+        	if [[ $container_name =~ ^android-emu-[0-9]+$ ]]; then
+            	digit=$(echo $container_name | grep -o '[0-9]*$')
+            		if [ $digit -gt $max_number ]; then
+                		max_number=$digit
+            		fi
+        	fi
+    	done
+    	next_number=$((max_number + 1))
+    	unic_name="android-emu-$next_number"
+    	port=5900
+    	while true; do
+        	(echo >/dev/tcp/127.0.0.1/$port) >/dev/null 2>&1
+        	result=$?
+        	if [ $result -ne 0 ]; then
+            		unic_port=$port
+            		break
+        	fi
+        	((port++))
+    	done
+    	image=android-emulator:android-13
+	docker run -d --name $unic_name --privileged -e "VNC_PORT=$unic_port" -p $unic_port:$unic_port $image > /dev/null 2>&1
+	if docker ps --format '{{.Names}}' | grep -q "^$unic_name$"; then
+		echo -e -n "\033[1;32m SUCCESS \033[0m"
+    		echo -e "\033[32m\u2713\033[0m"
+		echo ""
+	else
+		echo -e -n "\033[1;31m FAILED \033[0m" 
+                echo -e "\033[31m\u274C\033[0m"
+                echo "Error: Docker container not running."
+                echo "Try to fix or contact maintainer of repo"
+                exit 1
+	fi
+}
+
+_vnc_app() {
+	sleep 5
+	clear
+	echo "Executing tigervnc and connect to emulator"
+	echo "=================================================="
+	echo "		Depending on the hardware," 
+	echo "		the emulator may take some time to start."
+	echo "		Be patient"
+	echo "=================================================="
+    	sleep 20
+    	exec vncviewer 127.0.0.1:${unic_port}
+}
+
+_remove_emu() {
+        echo "Try to stop and remove ALL emulator containers"
+	echo ""
+	container_list=$(docker ps -a --format '{{.Names}}' | grep '^android-emu-[0-9]\+$')
+	if [ -z "$container_list" ]; then
+        	echo "No containers found with names starting with 'android-emu-<num>'"
+    	else
+        	echo "Stopping and removing containers:"
+        	for container_name in $container_list; do
+            		echo -e -n "Stopping container: $container_name"
+            		docker stop $container_name > /dev/null
+			echo -e -n "\033[1;32m SUCCESS \033[0m"
+	                echo -e "\033[32m\u2713\033[0m"
+            		echo -e -n "Removing container: $container_name"
+            		docker rm $container_name > /dev/null
+			echo -e -n "\033[1;32m SUCCESS \033[0m"
+	                echo -e "\033[32m\u2713\033[0m"
+		done
+		echo ""
+        	echo "All containers with names starting with 'android-emu-<num>' stopped and removed"
+	fi
+}
+_help() {
+	echo "			Usage: $0 [option]"
+	echo "Options:"
+	echo "=================================================================================="
+	echo "  -r, --run          Pull emulator image,start emulator,run vnc --> this emulator"
+	echo "  -d, --delete       Delete ALL emulator containers (DATA IN EMU WILL BE LOST!)"
+	echo "  -h, --help         Show this help"
+        echo "=================================================================================="
+}
+_hello() {
+echo "
+█▀▀ ▄▀█ █▀ ▀█▀   █▀▀ █░░ █   ▄▀█ █▄░█ █▀▄ █▀█ █▀█ █ █▀▄   █▀▀ █▀▄▀█ █░█ █░░ ▄▀█ ▀█▀ █▀█ █▀█
+█▀░ █▀█ ▄█ ░█░   █▄▄ █▄▄ █   █▀█ █░▀█ █▄▀ █▀▄ █▄█ █ █▄▀   ██▄ █░▀░█ █▄█ █▄▄ █▀█ ░█░ █▄█ █▀▄
+"
+}
+if [[ $(uname) != "Linux" ]]; then
+	echo -e -n "\033[1;31m FAILED \033[0m" 
+        echo -e "\033[31m\u274C\033[0m"
+	echo "Error: Sorry, this script can only be executed on a Linux(deb based) operating system."
+    	exit 1
+fi
+if [[ $# -eq 0 ]]; then
+	_hello
+	_help
+	exit 0
+fi
+# Parse command line options
+while [[ "$1" != "" ]]; do
+    case $1 in
+    -r | --run)
+	_hello
+	_check_preinst
+        _build_app
+        _run_app
+        _vnc_app
+        ;;
+    -d | --delete)
+	_hello
+	_remove_emu        
+        ;;
+    -h | --help)
+	_hello
+        _help
+        exit 0
+        ;;
+    *)
+        echo "Error: Invalid option"
+        _help
+        exit 1
+        ;;
+    esac
+    shift
+done
+
