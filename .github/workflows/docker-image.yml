@@ -6,13 +6,19 @@ on:
 
 jobs:
 
-  build:
+  build-publish:
 
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
     - name: Build image
+    - uses: actions/checkout@v4
       run: |
        cd emulator && echo 2000 | ./automate_android.sh ../conf/android-13;
-       echo "Action done"
+       docker images;
+
+    - name: Login to Docker Hub
+    - uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_HUB_ACTOR }}
+        password: ${{ secrets.DOCKER_HUB_TOKEN }}
