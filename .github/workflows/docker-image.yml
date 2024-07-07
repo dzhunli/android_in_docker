@@ -28,4 +28,4 @@ jobs:
     - 
       name: Push to Docker Hub
       run: |
-            docker push ${{ secrets.DOCKER_HUB_ACTOR }}/android-emulator:android-13
+            docker push android-emulator:android-13
