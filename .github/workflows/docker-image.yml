@@ -14,5 +14,5 @@ jobs:
     - uses: actions/checkout@v4
     - name: Build image
       run: |
-       cd emulator && echo 2000 | ./automate_android.sh ../conf/${CI_JOB_NAME};
+       cd emulator && echo 2000 | ./automate_android.sh ../conf/android-13;
        echo "Action done"
