@@ -1,17 +1,16 @@
-# FAST ANDROID EMULATOR
- - Android 13.0
- - Tablet view
- - Preistalled: adb
-
 [![generate android 13 image](https://github.com/dzhunli/android_in_docker/actions/workflows/docker-image.yml/badge.svg?branch=main)](https://github.com/dzhunli/android_in_docker/actions/workflows/docker-image.yml)
 
 ![Android 13 Pulls](https://img.shields.io/docker/pulls/dzhunli/android-emulator)
 
 ![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
+---
+# FAST ANDROID EMULATOR
+ - Android 13.0
+ - Tablet view
+ - Preistalled: adb
 
 ---
 ![example-usage](.preview/emulators.png)
----
 
 ## Why is this necessary?
  - easy way to run android on linux
