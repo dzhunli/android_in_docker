@@ -3,6 +3,8 @@
  - Tablet view
  - Preistalled: adb
 
+[![generate android-13 image](https://github.com/dzhunli/android_in_docker/actions/workflows/docker-image.yml/badge.svg?branch=main)](https://github.com/dzhunli/android_in_docker/actions/workflows/docker-image.yml)
+
 ![example-usage](.preview/emulators.png)
 
 ## Why is this necessary?
@@ -42,3 +44,5 @@ docker --> please visit https://docs.docker.com/engine/install/ (you don`t need 
 | -d | Delete all android emulator containers |
 | -h | Show help |
 
+## Acknowledgements
+Special thanks to the aerokube.com for their emulator, the approaches in which were taken as the basis for the project
