@@ -29,31 +29,52 @@ _check_preinst() {
 	fi
 }
 
-_build_app() {
-	local image_name="android-emulator:android-13"
-	#if docker images -q $image_name > /dev/null 2>&1; then
-	if docker image inspect $image_name > /dev/null 2>&1; then
-		echo -e -n "Docker image '$image_name' already exists locally."
-        	echo -e -n "\033[1;32m SUCCESS \033[0m"
-        	echo -e "\033[32m\u2713\033[0m"
-        	echo ""
-    	else
-        	echo  "Docker image '$image_name' not found locally."
-       		read -p "Please provide the absolute path to the 'emulator' directory: " emulator_path
-	        if [ -z "$emulator_path" ] || [ ! -d "$emulator_path" ]; then
-            		echo "Invalid path. Please make sure the path is correct and try again."
-            		return 1
-        	fi
-		cd "${emulator_path}/emulator" && echo 2000 | ./automate_android.sh ../conf/android-13
-        	if [ $? -eq 0 ]; then
-			echo -e -n "\033[1;32m SUCCESS \033[0m"
-            		echo -e "\033[32m\u2713\033[0m"
-            		echo ""
-        	else
-            		echo "Build failed"
-            		return 1
-        	fi
-	fi
+#############################################
+#	to be able to build 
+#	the emulator locally
+#	uncomment the function below
+#############################################
+
+#_build_app() {
+#	local image_name="dzhunli/android-emulator:android-13"
+#	if docker image inspect $image_name > /dev/null 2>&1; then
+#		echo -e -n "Docker image '$image_name' already exists locally."
+#        	echo -e -n "\033[1;32m SUCCESS \033[0m"
+#        	echo -e "\033[32m\u2713\033[0m"
+#        	echo ""
+#    	else
+#        	echo  "Docker image '$image_name' not found locally."
+#       		read -p "Please provide the absolute path to the 'emulator' directory: " emulator_path
+#	        if [ -z "$emulator_path" ] || [ ! -d "$emulator_path" ]; then
+#            		echo "Invalid path. Please make sure the path is correct and try again."
+#            		return 1
+#        	fi
+#		cd "${emulator_path}/emulator" && echo 2000 | ./automate_android.sh ../conf/android-13
+#        	if [ $? -eq 0 ]; then
+#			docker tag android-emulator:android-13 dzhunli/android-emulator:android-13
+#			echo -e -n "\033[1;32m SUCCESS \033[0m"
+#            		echo -e "\033[32m\u2713\033[0m"
+#            		echo ""
+#        	else
+#            		echo "Build failed"
+#            		return 1
+#        	fi
+#	fi
+#}
+
+
+#############################################
+#       to be able to build 
+#       the emulator locally
+#       comment the function below
+#############################################
+_pull_app() {
+	image=dzhunli/android-emulator:android-13
+        echo "Try to pull emulator image from registry"
+        docker pull $image
+        echo -e -n "\033[1;32m SUCCESS \033[0m"
+        echo -e "\033[32m\u2713\033[0m"
+        echo ""
 }
 _run_app() {
 	echo -e -n "Try to run emulator container with unic name and unic vnc port"
@@ -79,7 +100,7 @@ _run_app() {
         	fi
         	((port++))
     	done
-    	image=android-emulator:android-13
+    	image="dzhunli/android-emulator:android-13"
 	docker run -d --name $unic_name --privileged -e "VNC_PORT=$unic_port" -p $unic_port:$unic_port $image > /dev/null 2>&1
 	if docker ps --format '{{.Names}}' | grep -q "^$unic_name$"; then
 		echo -e -n "\033[1;32m SUCCESS \033[0m"
@@ -161,7 +182,8 @@ while [[ "$1" != "" ]]; do
     -r | --run)
 	_hello
 	_check_preinst
-        _build_app
+        #_build_app #to be able to build the emulator locally uncomment the function below
+	_pull_app #to be able to build the emulator locally comment the function below
         _run_app
         _vnc_app
         ;;
