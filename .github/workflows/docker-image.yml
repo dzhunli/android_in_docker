@@ -28,4 +28,5 @@ jobs:
     - 
       name: Push to Docker Hub
       run: |
+            docker image tag android-emulator:android-13 dzhunli/android-emulator:android-13
             docker push dzhunli/android-emulator:android-13
