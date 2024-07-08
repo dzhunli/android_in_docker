@@ -5,6 +5,10 @@
 
 [![generate android 13 image](https://github.com/dzhunli/android_in_docker/actions/workflows/docker-image.yml/badge.svg?branch=main)](https://github.com/dzhunli/android_in_docker/actions/workflows/docker-image.yml)
 
+![Docker Pulls](https://img.shields.io/docker/pulls/dzhunli/android-emulator)
+
+![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
+
 ![example-usage](.preview/emulators.png)
 
 ## Why is this necessary?
