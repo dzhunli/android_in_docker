@@ -9,7 +9,9 @@
 
 ![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
 
+---
 ![example-usage](.preview/emulators.png)
+---
 
 ## Why is this necessary?
  - easy way to run android on linux
