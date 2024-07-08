@@ -3,7 +3,7 @@
  - Tablet view
  - Preistalled: adb
 
-[![generate android-13 image](https://github.com/dzhunli/android_in_docker/actions/workflows/docker-image.yml/badge.svg?branch=main)](https://github.com/dzhunli/android_in_docker/actions/workflows/docker-image.yml)
+[![generate android 13 image](https://github.com/dzhunli/android_in_docker/actions/workflows/docker-image.yml/badge.svg?branch=main)](https://github.com/dzhunli/android_in_docker/actions/workflows/docker-image.yml)
 
 ![example-usage](.preview/emulators.png)
 
