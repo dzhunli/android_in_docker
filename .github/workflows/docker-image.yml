@@ -23,7 +23,7 @@ jobs:
       name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
     -
-      name: Build&Analyze image
+      name: Build & Analyze image
       run: |
             echo "::group::Installing dive" 
             DIVE_VERSION=$(curl -sL "https://api.github.com/repos/wagoodman/dive/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/');
@@ -33,9 +33,7 @@ jobs:
             echo "::group::building docker image" 
             cd emulator && echo 2000 | ./automate_android.sh ../conf/android-13;
             echo "::endgroup::"
-            echo "::notice::Starting Analysis..."
             CI=true dive --ci-config .dive-ci.yml android-emulator:android-13 
-            echo "::notice::Analysis Completed."
     -
       name: Metadata
       id: meta
