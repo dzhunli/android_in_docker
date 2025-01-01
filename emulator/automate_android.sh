@@ -211,7 +211,7 @@ rm -Rf *.bak || true
 set -x
 
 #tmp_tag="$tag"_tmp
-docker build --no-cache -t "$tag" \
+DOCKER_BUILDKIT=1 docker build -t "$tag" \
     --build-arg APPIUM_VERSION="$appium_version" \
     --build-arg ANDROID_DEVICE="$android_device" \
     --build-arg REPLACE_IMG="$replace_img" \

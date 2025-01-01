@@ -35,7 +35,6 @@ jobs:
         images: android-emulator:android-13        
         tags: ${{ steps.meta.outputs.tags }}
         annotations: ${{ steps.meta.outputs.annotations }}
-
     - 
       name: Push to Docker Hub
       run: |
