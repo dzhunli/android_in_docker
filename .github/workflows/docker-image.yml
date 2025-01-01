@@ -33,6 +33,9 @@ jobs:
             echo "::group::building docker image" 
             cd emulator && echo 2000 | ./automate_android.sh ../conf/android-13;
             echo "::endgroup::"
+    -
+      name: Analyze image
+      run: |
             CI=true dive --ci-config .dive-ci.yml android-emulator:android-13 
     -
       name: Metadata
