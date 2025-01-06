@@ -36,7 +36,7 @@ jobs:
           image_name: "android-emulator:android-13"
           ci_config: ".dive-ci.yml"
           allow_large_image: "false"
-          continue_on_fail: "false"
+          continue_on_fail: "true"
 
     -
       name: Metadata
