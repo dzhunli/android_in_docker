@@ -31,15 +31,12 @@ jobs:
             echo "::endgroup::"
     -
         name: Run Dive Analysis
-        uses: dzhunli/image-analytics@v9-staging
+        uses: dzhunli/image-analytics@v0.0.2
         with:
           image_name: "android-emulator:android-13"
           ci_config: ".dive-ci.yml"
 #          allow_large_image: "true"
-    #-
-    #  name: Analyze Docker Image
-    #  run: |
-    #        CI=true dive --ci-config .dive-ci.yml android-emulator:android-13 
+
     -
       name: Metadata
       id: meta
