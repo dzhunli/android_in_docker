@@ -30,7 +30,7 @@ jobs:
             cd emulator && echo 2000 | ./automate_android.sh ../conf/android-13;
             echo "::endgroup::"
     -
-        name: Run Dive Analysis
+        name: Dive Analysis
         uses: dzhunli/image-analytics@v0.0.4
         with:
           image_name: "android-emulator:android-13"
