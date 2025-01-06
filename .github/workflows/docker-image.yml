@@ -25,11 +25,6 @@ jobs:
     -
       name: Build Docker Image
       run: |
-            echo "::group::Installing dive" 
-            DIVE_VERSION=$(curl -sL "https://api.github.com/repos/wagoodman/dive/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/');
-            curl -OL https://github.com/wagoodman/dive/releases/download/v${DIVE_VERSION}/dive_${DIVE_VERSION}_linux_amd64.deb;
-            sudo apt install -qqq ./dive_${DIVE_VERSION}_linux_amd64.deb;
-            echo "::endgroup::"
             echo "::group::building docker image" 
             cd emulator && echo 2000 | ./automate_android.sh ../conf/android-13;
             echo "::endgroup::"
@@ -45,6 +40,13 @@ jobs:
         images: android-emulator:android-13        
         tags: ${{ steps.meta.outputs.tags }}
         annotations: ${{ steps.meta.outputs.annotations }}
+    -
+        name: Run Dive Analysis
+        uses: dzhunli/image-analytics@v1-staging
+        with:
+          image_name: "android-emulator:android-13"
+          ci_config: ".dive-ci.yml"
+#          allow_large_image: "true"
     - 
       name: Push to Docker Hub
       run: |
