@@ -31,7 +31,7 @@ jobs:
             echo "::endgroup::"
     -
         name: Run Dive Analysis
-        uses: dzhunli/image-analytics@v1-staging
+        uses: dzhunli/image-analytics@v2-staging
         with:
           image_name: "android-emulator:android-13"
           ci_config: ".dive-ci.yml"
