@@ -29,6 +29,9 @@ jobs:
             echo "::group::building docker image" 
             cd emulator && echo 2000 | ./automate_android.sh ../conf/android-13;
             echo "::endgroup::"
+    - 
+        name: Checkout dive code
+        uses: actions/checkout@v3
     -
         name: Run Dive Analysis
         uses: dzhunli/image-analytics@v2-staging
